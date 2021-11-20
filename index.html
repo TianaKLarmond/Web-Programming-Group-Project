@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WP Group Assignment</title>
+
+    <style>
+        legend{
+            text-align: center;
+            font-size: 20px;
+        }
+
+        label{
+            display: block; /*enables each label to be placed in a newline */
+            margin-top: 1em;
+            width: 40%;
+        }
+
+        /*includes a red asterik next to each required input label*/
+        .required:after 
+        {
+            content:" *";
+            color: red;
+        }
+
+        form input[type=text]{
+            width: 50%;
+        }
+
+        .para1{
+            color: red;
+        }
+
+        #rand1, #rand2, #product{
+            text-align: center;
+            width:10%;
+        }
+
+        /* additional styling */
+        *{
+            padding:0%;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        body{
+           background-color: rgba(0, 174, 255, 0.479);
+            font-family: Arial, Helvetica, sans-serif;
+            color: #ffff;
+            text-shadow: 2px 2px 4px #000000;
+            
+        }
+        section{
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .form-group{
+            width: 100%;
+            margin-top: 20px;
+            font-size: 20px;
+        }
+        .form-group input, 
+        .form-group textarea{
+            width: 100%;
+            padding: 5px;
+            border: solid 1px whitesmoke;
+            margin-top: 5px;
+            border-radius: 5px;
+        }
+        fieldset{
+            border: none;
+        }
+        .section{
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        legend{
+            font-family: 'Arial';
+            font-size: 40px;
+        }
+        .container{
+            flex-direction: row;
+            width: 90%;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            border: none;
+            border-radius: 8px;
+            background-color:  #64e8ff;
+            box-shadow: 0px 0px 20px 10px rgba(23, 19, 26, 0.432);
+            margin-bottom: 20px;
+        }
+        .container{
+            transition: 1s;
+        }
+        .container:hover{
+            transform:scale(1.091);
+            z-index: 1;
+        }
+        .disabled{
+            background-color: #ffff;
+        } 
+
+        /* Button Styling */
+        .button-entity{
+            outline: none;
+            border: 0px;
+            padding: 8px;
+            padding: 8px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            color: #ffffff;
+            transition: all 0.3s linear;
+            background: rgb(34, 188, 226);
+        }
+        .button-entity:hover,
+        .button-entity:focus{
+            background: rgb(24, 146, 177);
+        }
+        .button-entity:active{
+            background: rgb(30, 71, 82);
+        }
+
+        #myProgress {
+            width: 100%;
+            background-color: #ddd;
+        }
+
+        #myBar {
+            width: 1%;
+            height: 30px;
+            background-color: #04AA6D;
+        }
+
+    </style>
+     <script>
+            var randTwo;
+            var randOne;
+            var PlayersData = [];
+            var cPlayer;
+            var firstName = document.getElementById("fname");
+            var lastName = document.getElementById("lname");
+            var age = document.getElementById("age");
+            var male = document.getElementById("male");
+            var female = document.getElementById("female");
+            var email = document.getElementById("email");
+            let correctAnswers = 0;//Variables to store numerator 
+            let numberOfQuestions = 0;// and denominator of the findPercentageScore()
+
+        function calculateAge()
+        {
+            let userAge = document.getElementById("dob").value;
+        
+            let dob = new Date(userAge);  
+
+            if(userAge==null || userAge=='') {  
+                alert("Please enter Date of Birth!");
+                return false;   
+            }
+            else {  
+                //calculate month difference from current date in time  
+                var month_diff = Date.now() - dob.getTime();  
+                    
+                //convert the calculated difference in date format  
+                var age_dt = new Date(month_diff);   
+                    
+                //extract year from date      
+                var year = age_dt.getUTCFullYear();  
+                    
+                //now calculate the age of the user  
+                var age = Math.abs(year - 1970);  
+                    
+                //display the calculated age if it's between 8 and 12 inclusive
+                if (age < 8 || age > 12){
+                    alert("Users must be between 8 and 12 inclusive!");
+                }
+                else{
+                    let userAge = document.getElementById("age");
+                    userAge.value = age;
+                }  
+            }
+        }
+
+        //task 4
+        function PlayGame()
+        {
+            randNum1 = document.getElementById("rand1");
+            // Returns a random number between 1 and 9
+            randOne = Math.floor(Math.random() * 9) + 1;
+            randNum1.value = randOne;
+
+            randNum2 = document.getElementById("rand2");
+            // Returns a random number Between 1 and 5
+            randTwo = Math.floor(Math.random() * 5) + 1;
+            randNum2.value = randTwo;
+  
+            incrementNumberOfQuestions();
+        }
+        
+        //task 6
+        function checkAnswer(){
+            let response = 0;
+            response = prompt("What is the product of " + randOne + " * " + randTwo, " ");
+            PlayersData.push((response));
+            let ans = Number(randOne) * Number(randTwo);
+            
+            while (ans != response){
+                alert("Sorry that's incorrect, please try again.");
+                response = prompt("What is the product of " + randOne + " * " + randTwo, " ");
+            }
+
+            alert("CONGRATULATIONS STAR STUDENT!!!! \nYour answer is correct!")
+            incrementCorrectAnswers();
+            let prod = document.getElementById("product");
+            prod.value = ans;
+
+            showAll(); //task 14
+        }
+
+        function player(fName, lName, gender, age, email){
+            this.fName = fName;
+            this.lName = lName;
+            this.age = age;
+            this.gender = gender;
+            this.email = email;
+            //this.answers = [];
+           // this.cAnswers = 0;
+           
+        }
+        function Register(){
+            
+            if (document.getElementById("registration").reportValidity()){
+
+                PlayersData.push(new player(document.getElementById("fname").value,
+                        document.getElementById("lname").value,
+                        document.querySelector('input[name="gender"]:checked').value,
+                        document.getElementById("age").value,
+                        document.getElementById("email").value));
+
+                        var pval="";
+
+                for (i = 0; i < PlayersData.length; i++){
+                    pval = pval + PlayersData[i] + "<br>";
+                    console.log(JSON.stringify(PlayersData));
+                }
+            }        
+                return false;    
+        }
+
+        // Task 10
+        //increments correctAnswers (When ans is correct, call this)
+        function incrementCorrectAnswers() {
+            correctAnswers = correctAnswers + 1;
+            showfreq();
+        }
+        //increments numberofQuestions (after every new question, call this)
+        function incrementNumberOfQuestions() {
+            numberOfQuestions = numberOfQuestions + 1;
+        }
+
+        //task 10 findPercentageScore()
+        function findPercentageScore(){
+            let percentScore = 0;
+            var firstName = document.getElementById("fname").value;
+            var lastName = document.getElementById("lname").value;
+            var date = new Date();
+            //if divisor is greater than zero, logic calculation
+            if(numberOfQuestions>0){
+                percentScore = correctAnswers / numberOfQuestions;
+                percentScore = percentScore * 100;
+                finalScore = percentScore.toFixed(2);
+            }
+            //Outputing Data to textarea
+            var data = document.getElementById('showpercentage');
+            data.value = "Number of Questions: " + numberOfQuestions + "\nCorrect Answers: " + correctAnswers + "\nName: " 
+            + firstName + " " + lastName + "\nPercentage Score: %" + finalScore + "\nCurrent Date: "+date;
+            
+        }
+
+        //task 13
+        function showAll(){
+            /*document.getElementById("showallplayers").innerHTML =
+                currentPlayer.fname + " " +
+                currentPlayer.lname + ", " +
+                currentPlayer.age + " yrs, " +
+                currentPlayer.correctAnswers  + "/" +
+                currentPlayer.answers.length + ", " +
+                percentage + "%" + ",<br>";*/
+
+            var pval2 = "";
+            document.getElementById('showallplayers').innerHTML=" ";
+            for (i=0;i<3;i++){
+                cument.getElementById("showallplayers").innerHTML += PlayersData[i]+", " ;
+            }
+            if (PlayersData.length>6){
+                for (i=6;i<PlayersData.length;i++){
+                    document.getElementById("showallplayers").innerHTML += PlayersData[i]+",\n " ;
+                } 
+            } 
+
+            for (i=9;i<3;i++){
+                document.getElementById("showallplayers").innerHTML += PlayersData[i]+",\n " ;
+            } 
+        }
+            // for (i = 0; i < PlayersData.length; i++){
+                // let text = PlayersData[i];
+                // document.getElementById('showallplayers').innerHTML
+                // pval2 = pval2 + PlayersData[i] + "<br>";
+                // console.log(JSON.stringify(PlayersData));
+            // }
+            // Object.prototype.toString.call(PlayersData);
+
+            //let text = PlayersData.toString();
+            //document.getElementById('showallplayers').value = text;
+            //var data = document.getElementById('showallplayers');
+            //data.value = ;
+        //}
+
+        // Task 15
+        var i = 0;
+        function showfreq() {
+            if (i == 0) {
+                i = 1;
+                var elem = document.getElementById("myBar");
+                var width = 1;
+                var id = setInterval(frame, 10);
+                function frame() {
+                    if (width >= 100) {
+                        clearInterval(id);
+                        i = 0;
+                    } else {
+                        width++;
+                        elem.style.width = width + "%";
+                    }
+                }
+            }
+        }
+
+        
+    </script>
+</head>
+<body>
+<!-- <body onload="document.registration.fname.focus();"> -->
+    <div class="container">
+
+        <div class="section">
+            <!-- task 1 -->
+            <form id="registration" onsubmit=" return Register()"> 
+                <fieldset>
+                    <legend>REGISTRATION</legend>
+
+                    <div class="form-group">
+                        <label for="fname" class="required">First Name</label>
+                        <input type="text" name="firstName" id="fname" value="" required pattern="[A-Za-z]{4,}" placeholder="At least 4 characters long.">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lname" class="required">Last Name</label>
+                        <input type="text" name="lastName" id="lname" value="" required pattern="[A-Za-z]{4,}" placeholder="At least 4 characters long.">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="required">Email</label>
+                        <input type="email" name="email" id="email" value="" required>
+                    </div>
+
+                    <div class = "form-group">
+                        <label for="dob" class="required">Date of Birth</label>
+                        <input type="date" name="dob" id="dob" value="" required onblur="calculateAge();">
+                    </div>
+
+                    <div class = "form-group">
+                        <label for="age">Age</label>
+                        <!-- Age must be calculated by the system from date of birth and must be between 8 and 12
+                        inclusive. -->
+                        <input type="text" name="age" id="age" value="" disabled placeholder="Calculated from Date of Birth.">
+                    </div>
+                    
+                    <div class = "gender-form-group">
+                        <label for="female" class="required">Gender</label><br>
+                        <input type="radio" name="gender" id="female" value="Female">Female &nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="gender" id="male" value="Male">Male
+                    </div>
+
+                    
+                    <br><br>
+                    <!-- ignore this button, i just needed to submit the data -->
+                    <button class="button-entity" type="button" id="submit" onclick="Register()">
+                        Register
+                    </button>
+                        
+                    <button class="button-entity" id="start" onclick="PlayGame()">
+                        Start
+                    </button>
+                
+                    <button class="button-entity" id="accept" onclick="checkAnswer()">
+                        Accept
+                    </button>
+
+                    <button type="submit" class="button-entity" id="next" onclick="PlayGame()">
+                        Next
+                    </button>
+                    <!-- Task 11 -->
+                    <input class="button-entity" type="button" value="End" onclick="findPercentageScore()">
+                
+                </fieldset>
+            </form>
+        </div>
+
+        <!-- task 4 -->
+        <form>
+            <fieldset>
+                <legend>PLAY</legend>
+                <!-- <p class="para1">Click to generate numbers for your multiplication practise!</p>
+
+                <input type="button" name="generate" id="generate" value="Generate" onclick="PlayGame();"> -->
+
+                <input type="text" name="randomNum1" id="rand1" value=" " disabled> 
+                <p style="display: inline;">*</p>
+                <input type="text" name="randomNum2" id="rand2" value=" " disabled>
+                <p style="display: inline;">=</p>
+                <input type="text" name="product" id="product" value=" " disabled>
+
+                <div class="form-group">
+                    <div id="myProgress">
+                        <div id="myBar"></div>
+                    </div>
+                </div>
+                
+                <!-- <br>
+                <button type="button" onclick="move()">Click Me</button>  -->
+            
+                <!-- Task 9-->
+                <div class="form-group">
+                    <label for="showpercentage" id="playerResult">Player Result</label>
+                    <textarea id="showpercentage" disabled="disabled" name="showpercentage" cols="30" rows="10"></textarea>
+                </div>
+
+                <!-- text area task 12 -->
+                <div class="form-group">
+                    <label for="showallplayers" id="allplayers">Show All Players</label>
+                    <textarea name="showallplayers" id="showallplayers" cols="30" rows="10" disabled="disabled"></textarea>
+                </div> 
+            </fieldset>
+        </form>
+    </div>
+
+    <hr>
+    <br>
+    <p>Leondré Broomfield &diams; Tiana Larmond &diams; Keishawna Roberts &diams; Jason Henry 
+        <br> &copy;Certified Web Programmers<br> Established 2021 <br><br> </p>
+    
+</body>
+</html>   
